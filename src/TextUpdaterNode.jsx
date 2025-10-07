@@ -1,12 +1,13 @@
-//bloco com texto
+// bloco com texto
 import { useCallback } from 'react';
-import { Background, Handle, Position } from '@xyflow/react';
+import { Handle, Position } from '@xyflow/react';
 
+// --- Estilos ---
 const nodeStyle = {
   padding: '10px',
   background: 'white',
   borderRadius: '15px',
-  width: '170px',
+  width: '200px', // Aumentei um pouco a largura
   boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
   fontFamily: 'sans-serif',
   fontSize: '14px',
@@ -15,61 +16,109 @@ const nodeStyle = {
   color: 'black'
 };
 
-const botao = {
-  color: '#9370DB',
+const handleStyle = {
   backgroundColor: '#9370db'
-}
+};
 
 const labelStyle = {
   display: 'block',
   marginBottom: '5px',
   marginTop: '10px',
   fontSize: '10px',
+  fontWeight: 'bold',
 };
 
 const inputStyle = {
   width: '100%',
   padding: '10px',
   border: '1px solid #9370DB',
-  borderRadius: '9999px',
+  borderRadius: '5px',
   backgroundColor: '#FFFFF',
   fontSize: '14px',
   boxSizing: 'border-box',
   outline: 'none',
 };
+// --- Fim Estilos ---
 
-function TextUpdaterNode({ data, isConnectable }) {
-  const onChange = useCallback((evt) => {
-    console.log(evt.target.value);
-  }, []);
+function TextUpdaterNode({ id, data, isConnectable }) {
+    
+  // Função para atualizar o valor da mensagem no estado do nó
+  const onMessageChange = useCallback((evt) => {
+    data.onDataChange(id, 'messageText', evt.target.value);
+  }, [id, data]);
+
+  // Função para atualizar o valor da condição 1 (Saída 'a')
+  const onConditionAChange = useCallback((evt) => {
+    data.onDataChange(id, 'conditionA', evt.target.value);
+  }, [id, data]);
+
+  // Função para atualizar o valor da condição 2 (Saída 'b')
+  const onConditionBChange = useCallback((evt) => {
+    data.onDataChange(id, 'conditionB', evt.target.value);
+  }, [id, data]);
 
   return (
     <div className="text-updater-node" style={nodeStyle}>
+      {/* TARGET: Onde a conversa entra */}
       <Handle
         type="target"
         position={Position.Top}
         isConnectable={isConnectable}
-        style={botao}
+        style={handleStyle}
       />
+      
       <div>
-        <label htmlFor="text" style={labelStyle}>Texto:</label>
-        <input id="text" name="text" onChange={onChange} className="nodrag" style={inputStyle} />
-        <label htmlFor="text" style={labelStyle}>Texto:</label>
-        <input id="text" name="text" onChange={onChange} className="nodrag" style={inputStyle} />
+        <label htmlFor="messageText" style={labelStyle}>MENSAGEM A ENVIAR:</label>
+        <textarea 
+          id="messageText" 
+          name="messageText" 
+          onChange={onMessageChange} 
+          className="nodrag" 
+          style={{...inputStyle, minHeight: '80px'}}
+          value={data.messageText || ''}
+        />
       </div>
-      <Handle
-        type="source"
-        position={Position.Right}
-        id="a"
-        isConnectable={isConnectable}
-        style={botao}
+
+      {/* Saída A (Handle 'a') */}
+      <div>
+        <label htmlFor="conditionA" style={labelStyle}>CONDIÇÃO PARA SAÍDA A (Ex: Sim):</label>
+        <input 
+          id="conditionA" 
+          name="conditionA" 
+          onChange={onConditionAChange} 
+          className="nodrag" 
+          style={inputStyle} 
+          placeholder="Ex: Sim ou Opção 1"
+          value={data.conditionA || ''}
+        />
+      </div>
+      <Handle 
+        type="source" 
+        position={Position.Right} 
+        id="a" // ID da saída A
+        isConnectable={isConnectable} 
+        style={{...handleStyle, top: '50%', background: 'green' }}
       />
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="b"
-        isConnectable={isConnectable}
-        style={botao}
+
+      {/* Saída B (Handle 'b') */}
+      <div>
+        <label htmlFor="conditionB" style={labelStyle}>CONDIÇÃO PARA SAÍDA B (Ex: Não):</label>
+        <input 
+          id="conditionB" 
+          name="conditionB" 
+          onChange={onConditionBChange} 
+          className="nodrag" 
+          style={inputStyle} 
+          placeholder="Ex: Não ou Opção 2"
+          value={data.conditionB || ''}
+        />
+      </div>
+      <Handle 
+        type="source" 
+        position={Position.Bottom} 
+        id="b" // ID da saída B
+        isConnectable={isConnectable} 
+        style={{...handleStyle, background: 'red' }}
       />
     </div>
   );

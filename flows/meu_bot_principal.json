@@ -1,0 +1,44 @@
+{
+  "nodes": [
+    {
+      "id": "node-start",
+      "type": "textUpdater",
+      "position": {
+        "x": 250,
+        "y": 5
+      },
+      "data": {
+        "messageText": "Olá! Bem-vindo ao meu bot. Digite 1 para Opção A ou 2 para Opção B.",
+        "conditionA": "1",
+        "conditionB": "2"
+      },
+      "measured": {
+        "width": 200,
+        "height": 276
+      }
+    },
+    {
+      "id": "ai-config-default",
+      "type": "aiConfig",
+      "position": {
+        "x": -376.7581903276131,
+        "y": -29.284711388455534
+      },
+      "data": {
+        "systemInstructions": "Você é um assistente prestativo e amigável, especialista em fluxos de WhatsApp."
+      },
+      "measured": {
+        "width": 300,
+        "height": 261
+      },
+      "selected": true,
+      "dragging": false
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 347.28057553956836,
+    "y": 36.86061151079139,
+    "zoom": 1.1528776978417266
+  }
+}
