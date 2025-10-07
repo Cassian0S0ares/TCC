@@ -111,3 +111,17 @@ h1 {
         transform: translateX(-50%) translateY(-10px);
     }
 }
+
+a {
+    text-decoration: none;
+}
+
+.projeto {
+    /* Define the transition for the 'transform' property */
+    transition: transform 0.5s ease-out; 
+}
+
+.projeto:hover {
+    /* Apply the transformation */
+    transform: translateY(-20px);
+}

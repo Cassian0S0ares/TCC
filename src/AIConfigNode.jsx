@@ -1,23 +1,23 @@
-// AIConfigNode.jsx
+// AIConfigNode.jsx - Bloco de Configuração de IA
 import { useCallback } from 'react';
 import { Handle, Position } from '@xyflow/react';
 
 // --- Estilos ---
 const nodeStyle = {
   padding: '15px',
-  background: '#F0FFF0', // Cor verde clara para diferenciar
+  background: '#F0FFF0', 
   borderRadius: '15px',
   width: '300px',
   boxShadow: '0 4px 8px rgba(0, 128, 0, 0.2)',
   fontFamily: 'sans-serif',
   fontSize: '14px',
   paddingBottom: '25px',
-  border: '2px dashed #3CB371', // Borda tracejada
+  border: '2px dashed #3CB371', 
   color: 'black'
 };
 
 const handleStyle = {
-  backgroundColor: '#3CB371' // Verde médio
+  backgroundColor: '#3CB371' 
 };
 
 const labelStyle = {
@@ -26,7 +26,7 @@ const labelStyle = {
   marginTop: '10px',
   fontSize: '12px',
   fontWeight: 'bold',
-  color: '#3CB371'
+  color: '#3CB371' 
 };
 
 const textareaStyle = {
@@ -38,24 +38,23 @@ const textareaStyle = {
   fontSize: '14px',
   boxSizing: 'border-box',
   outline: 'none',
-  minHeight: '150px',
+  minHeight: '150px', 
+  resize: 'vertical'
 };
 // --- Fim Estilos ---
 
 function AIConfigNode({ id, data, isConnectable }) {
     
-  // Função para atualizar o valor das instruções no estado do nó
   const onInstructionsChange = useCallback((evt) => {
-    // data.onDataChange é o callback principal passado do App.jsx
     data.onDataChange(id, 'systemInstructions', evt.target.value);
   }, [id, data]);
 
   return (
     <div className="ai-config-node" style={nodeStyle}>
-      {/* Target: Opcional, para indicar que este bloco pode ser ativado por um fluxo */}
+      {/* TARGET: Entrada de ativação */}
       <Handle
         type="target"
-        position={Position.Top}
+        position={Position.Top} 
         isConnectable={isConnectable}
         style={handleStyle}
       />
@@ -70,22 +69,22 @@ function AIConfigNode({ id, data, isConnectable }) {
           onChange={onInstructionsChange} 
           className="nodrag" 
           style={textareaStyle}
-          placeholder="Ex: Você é um assistente de vendas amigável. Use emojis e responda apenas em horário comercial (9h às 18h). Qualquer pergunta fora do escopo de vendas deve ser respondida com 'Entre em contato com o suporte técnico'."
-          value={data.systemInstructions || ''} // Exibe o texto salvo
+          placeholder="Ex: Você é um bot de suporte. Responda de forma direta e concisa. Limite-se a dar instruções técnicas."
+          value={data.systemInstructions || ''} 
         />
       </div>
 
       <p style={{marginTop: '10px', fontSize: '10px', color: '#555'}}>
-        Este bloco define a personalidade do ChatBot.
+        Este bloco define a **personalidade** do ChatBot.
       </p>
 
-      {/* Source: Opcional, para permitir conexão com outros nós, se necessário */}
+      {/* SOURCE: Saída (para voltar ao menu ou seguir o fluxo) */}
       <Handle 
         type="source" 
         position={Position.Bottom} 
-        id="out" 
+        id="default"
         isConnectable={isConnectable} 
-        style={handleStyle}
+        style={handleStyle} 
       />
     </div>
   );

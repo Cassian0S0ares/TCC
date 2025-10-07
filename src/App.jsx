@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -9,7 +9,6 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import TextUpdaterNode from './TextUpdaterNode'; 
-// ⚠️ 1. IMPORTAÇÃO CORRETA: O novo bloco precisa ser importado
 import AIConfigNode from './AIConfigNode'; 
 
 const rfStyle = {
@@ -18,45 +17,72 @@ const rfStyle = {
   backgroundSize: '20px 20px',
 };
 
-// Dados iniciais (garantindo que o bloco AI esteja presente por padrão)
+// ----------------------------------------------------------------------
+// DADOS INICIAIS (Fluxo Padrão - Usado se o ID não for encontrado)
+// ----------------------------------------------------------------------
 const initialNodes = [
   {
     id: 'node-start', 
     type: 'textUpdater',
-    position: { x: 5, y: 5 },
+    position: { x: 50, y: 150 }, 
     data: { 
-      messageText: "Olá! Bem-vindo ao meu bot. Digite 1 para Opção A ou 2 para Opção B.",
-      conditionA: "1",
-      conditionB: "2",
-      onDataChange: () => {}, // placeholder
+      messageText: "Olá! Digite o número da opção desejada:\n\n1. Vendas e Informações\n2. Falar com a IA (Suporte)",
+      conditionA: "1", 
+      conditionB: "2", 
+      onDataChange: () => {}, 
     },
   },
   {
-    id: 'ai-config-default', 
-    type: 'aiConfig',
-    position: { x: 5, y: 300 },
+    id: 'node-vendas', 
+    type: 'textUpdater',
+    position: { x: 350, y: 150 }, 
     data: { 
-      systemInstructions: "Você é um assistente prestativo e amigável, especialista em fluxos de WhatsApp.",
-      onDataChange: () => {}, // placeholder
+      messageText: "Vendas de 9h às 18h. Digite '0' para voltar.",
+      conditionA: "0", 
+      conditionB: "", 
+      onDataChange: () => {}, 
+    },
+  },
+  {
+    id: 'ia-suporte-config', 
+    type: 'aiConfig',
+    position: { x: 50, y: 450 }, 
+    data: { 
+      systemInstructions: "Você é um bot de suporte técnico.",
+      onDataChange: () => {}, 
     },
   },
 ];
 
-// ⚠️ 2. REGISTRO CORRETO: Os dois tipos de nó precisam ser registrados
+const initialEdges = [
+  { id: 'e1-2a', source: 'node-start', sourceHandle: 'a', target: 'node-vendas', type: 'smoothstep', label: '1 - Vendas' },
+  { id: 'e1-3b', source: 'node-start', sourceHandle: 'b', target: 'ia-suporte-config', type: 'smoothstep', label: '2 - Suporte (Ativa IA)' },
+  { id: 'e2-1a', source: 'node-vendas', sourceHandle: 'a', target: 'node-start', type: 'smoothstep', label: '0 - Voltar' },
+];
+
 const nodeTypes = { 
     textUpdater: TextUpdaterNode,
     aiConfig: AIConfigNode, 
 };
 
-function FlowCanvas() {
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState([]);
-  const reactFlowWrapper = useRef(null);
-  
-  // ⚠️ 3. ACESSO CORRETO: Desestrutura os métodos 'project' e 'toObject' diretamente
-  const { project, toObject } = useReactFlow();
+// ----------------------------------------------------------------------
+// FUNÇÃO AUXILIAR: LER O ID DO PROJETO DA URL
+// ----------------------------------------------------------------------
+const getFlowIdFromUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+    // Retorna o valor de 'flowId' da URL, ou 'fluxo_padrao' como fallback
+    return params.get('flowId') || 'fluxo_padrao'; 
+};
 
-  // Função para atualizar os dados internos de um nó (passada para os filhos)
+function FlowCanvas() {
+  // Inicializa o estado com base no ID da URL, mas os nós e arestas vazios (serão carregados)
+  const [currentFlowId, setCurrentFlowId] = useState(getFlowIdFromUrl()); 
+  const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]); 
+  
+  const reactFlowWrapper = useRef(null);
+  const reactFlowInstance = useReactFlow();
+
   const onNodeDataChange = useCallback((id, key, value) => {
     setNodes((nds) =>
       nds.map((node) => {
@@ -89,12 +115,16 @@ function FlowCanvas() {
     [],
   );
   
-  // Lógica de salvamento
+  // ----------------------------------------------------------------------
+  // SALVAR FLUXO
+  // ----------------------------------------------------------------------
   const onSave = useCallback(async () => {
-    // Usa 'toObject' desestruturado
-    const flow = toObject(); 
-    
-    const FLOW_ID = 'Bot Principal'; 
+    const FLOW_ID = currentFlowId.trim();
+    if (!FLOW_ID) {
+      alert("Por favor, insira um ID de Projeto válido para salvar.");
+      return;
+    }
+    const flow = reactFlowInstance.toObject(); 
     const API_URL = `http://localhost:3001/api/flows/${FLOW_ID}`;
 
     try {
@@ -107,25 +137,72 @@ function FlowCanvas() {
         const result = await response.json();
 
         if (response.ok) {
-            alert(`✅ Fluxo salvo com sucesso! ID: ${result.flowId}`);
+            alert(`✅ Fluxo salvo com sucesso! ID: ${FLOW_ID}`);
         } else {
             alert(`❌ Erro ao salvar o fluxo: ${result.message || 'Erro de servidor'}`);
         }
     } catch (error) {
         console.error('Erro de conexão:', error);
-        alert('❌ Erro de conexão ao servidor API. Certifique-se de que api.js está rodando na porta 3001.');
+        alert('❌ Erro de conexão ao servidor API.');
     }
     
-  }, [toObject]); 
+  }, [reactFlowInstance, currentFlowId]); 
 
-  // ⚠️ 4. FUNÇÃO DE CRIAÇÃO CORRETA: Usa 'project' e define o 'type'
-  // ⚠️ Modificação para contornar o erro do 'project'
+  // ----------------------------------------------------------------------
+  // CARREGAR FLUXO
+  // ----------------------------------------------------------------------
+  const onLoad = useCallback(async (idToLoad) => {
+    const FLOW_ID = idToLoad.trim();
+    if (!FLOW_ID) return;
+
+    const API_URL = `http://localhost:3001/api/flows/${FLOW_ID}`;
+
+    try {
+        const response = await fetch(API_URL);
+        
+        if (response.status === 404) {
+             console.log(`Fluxo '${FLOW_ID}' não encontrado. Iniciando layout padrão.`);
+             // Se não existe, carrega o layout inicial (initialNodes/Edges)
+             setNodes(initialNodes); 
+             setEdges(initialEdges);
+             return;
+        }
+        
+        const flow = await response.json();
+
+        setNodes(flow.nodes || []);
+        setEdges(flow.edges || []);
+        
+        if (flow.viewport) {
+             reactFlowInstance.setViewport(flow.viewport, { duration: 500 });
+        }
+        
+        console.log(`Fluxo '${FLOW_ID}' carregado com sucesso.`);
+
+    } catch (error) {
+        console.error('Erro ao carregar o fluxo:', error);
+        alert('❌ Erro de conexão ao servidor API ou falha na leitura do JSON.');
+    }
+  }, [reactFlowInstance, setNodes, setEdges]); 
+
+  // ----------------------------------------------------------------------
+  // EFEITO: CARREGAR FLUXO AO INICIAR O COMPONENTE
+  // ----------------------------------------------------------------------
+  useEffect(() => {
+    // Carrega o fluxo usando o ID que veio da URL
+    if (reactFlowInstance) {
+        onLoad(currentFlowId); 
+    }
+  }, [reactFlowInstance]); // Executa uma vez após a montagem e inicialização do ReactFlow
+
+  // ----------------------------------------------------------------------
+  // FUNÇÃO: ADICIONAR NOVO NÓ
+  // ----------------------------------------------------------------------
   const addNode = (type) => { 
-    
-    // ✅ NOVO: Posição aleatória fixa (Os nós aparecerão no canto superior esquerdo)
+    // Garante que o novo nó não nasça exatamente em 0,0
     const position = {
-      x: -50 + Math.random() * 50, 
-      y: -50 + Math.random() * 50,
+      x: 50 + Math.random() * 50, 
+      y: 50 + Math.random() * 50,
     };
 
     const newNodeId = `node-${type}-${Date.now()}`; 
@@ -137,17 +214,14 @@ function FlowCanvas() {
     const newNode = {
       id: newNodeId,
       type: type, 
-      position, // Usa a nova posição fixa
+      position, 
       data: initialData,
     };
 
     setNodes((nds) => [...nds, newNode]);
-    
-    // DEBUG: Confirma que o nó foi adicionado ao estado
-    console.log(`✅ Novo nó (${type}) adicionado ao estado:`, newNodeId);
+    console.log(`✅ Novo nó (${type}) adicionado:`, newNodeId);
   };
   
-  // Mapeia os nós para garantir que a função de callback esteja disponível para nós já existentes
   const nodesWithCallback = nodes.map(node => ({
     ...node,
     data: {
@@ -171,9 +245,27 @@ function FlowCanvas() {
           gap: '10px'
         }}
       >
-        {/* Interação Direta  */}
+        {/* INPUT ID DO PROJETO */}
+        <label style={{fontSize: '12px', fontWeight: 'bold', display: 'block', marginBottom: '5px'}}>ID do Projeto:</label>
+        <input 
+          type="text"
+          value={currentFlowId}
+          onChange={(e) => setCurrentFlowId(e.target.value)}
+          placeholder="Ex: fluxo_vendas"
+          style={{
+            padding: '0.5rem',
+            borderRadius: '5px',
+            border: '1px solid #9370DB',
+            width: '100%',
+            marginBottom: '15px'
+          }}
+        />
+        
+        <hr style={{width: '100%', borderTop: '1px solid #9370DB', margin: '10px 0'}} />
+
+        {/* BOTÕES DE ADICIONAR NÓ */}
         <button
-          onClick={() => addNode('textUpdater')} // Chama addNode com o tipo 'textUpdater'
+          onClick={() => addNode('textUpdater')}
           style={{
             padding: '0.5rem',
             background: '#FFF',
@@ -189,9 +281,8 @@ function FlowCanvas() {
           + Bloco de Mensagem
         </button>
         
-        {/* Interações com a IA */}
         <button
-          onClick={() => addNode('aiConfig')} // Chama addNode com o tipo 'aiConfig'
+          onClick={() => addNode('aiConfig')}
           style={{
             padding: '0.5rem',
             background: '#3CB371', 
@@ -209,6 +300,25 @@ function FlowCanvas() {
 
         <hr style={{width: '100%', borderTop: '1px solid #9370DB', margin: '10px 0'}} />
 
+        {/* BOTÕES SALVAR/CARREGAR */}
+        <button
+          onClick={() => onLoad(currentFlowId)} // Carrega o que estiver digitado
+          style={{
+            padding: '0.5rem',
+            background: '#4682B4',
+            borderRadius: '15px',
+            cursor: 'pointer',
+            color: 'white', 
+            fontWeight: 'bolder',
+            width: '100%',
+            border: '1px solid #4682B4',
+            textAlign: 'center', 
+            marginBottom: '10px' 
+          }}
+        >
+          🔄 CARREGAR FLUXO
+        </button>
+        
         <button
           onClick={onSave}
           style={{

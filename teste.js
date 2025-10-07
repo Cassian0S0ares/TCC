@@ -6,7 +6,7 @@ import { findBestMatch } from 'string-similarity';
 
 // --- Configurações ---
 const GEMINI_API_KEY = "AIzaSyBWPkHIwzfOYKUR8dj2e1rSSzX6P2sWGoo"; 
-const FLOW_API_URL = 'http://localhost:3001/api/flows/meu_bot_principal'; 
+const FLOW_API_URL = 'http://localhost:3001/api/flows/Vendas_Bot'; 
 const SIMILARITY_THRESHOLD = 0.6; // Nível de similaridade para reconhecer a condição
 
 // --- Inicialização de Serviços ---

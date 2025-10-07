@@ -41,7 +41,7 @@ const inputStyle = {
 // --- Fim Estilos ---
 
 function TextUpdaterNode({ id, data, isConnectable }) {
-    
+
   // Função para atualizar o valor da mensagem no estado do nó
   const onMessageChange = useCallback((evt) => {
     data.onDataChange(id, 'messageText', evt.target.value);
@@ -57,6 +57,11 @@ function TextUpdaterNode({ id, data, isConnectable }) {
     data.onDataChange(id, 'conditionB', evt.target.value);
   }, [id, data]);
 
+  // Função para atualizar o valor da condição 3 (Saída 'C')
+  const onConditionCChange = useCallback((evt) => {
+    data.onDataChange(id, 'conditionC', evt.target.value);
+  }, [id, data]);
+
   return (
     <div className="text-updater-node" style={nodeStyle}>
       {/* TARGET: Onde a conversa entra */}
@@ -66,59 +71,78 @@ function TextUpdaterNode({ id, data, isConnectable }) {
         isConnectable={isConnectable}
         style={handleStyle}
       />
-      
+
       <div>
         <label htmlFor="messageText" style={labelStyle}>MENSAGEM A ENVIAR:</label>
-        <textarea 
-          id="messageText" 
-          name="messageText" 
-          onChange={onMessageChange} 
-          className="nodrag" 
-          style={{...inputStyle, minHeight: '80px'}}
+        <textarea
+          id="messageText"
+          name="messageText"
+          onChange={onMessageChange}
+          className="nodrag"
+          style={{
+            ...inputStyle,
+            minHeight: '200px', // 👈 MUDANÇA: Aumenta a altura mínima
+            resize: 'vertical', // Permite redimensionamento vertical pelo usuário
+            borderRadius: '5px' // Usa bordas quadradas para área de texto
+          }}
+          placeholder="Digite sua mensagem longa aqui..."
           value={data.messageText || ''}
         />
       </div>
 
+
       {/* Saída A (Handle 'a') */}
       <div>
-        <label htmlFor="conditionA" style={labelStyle}>CONDIÇÃO PARA SAÍDA A (Ex: Sim):</label>
-        <input 
-          id="conditionA" 
-          name="conditionA" 
-          onChange={onConditionAChange} 
-          className="nodrag" 
-          style={inputStyle} 
+        <label htmlFor="conditionA" style={labelStyle}>CONDIÇÃO PARA SAÍDA A:</label>
+        <input
+          id="conditionA"
+          name="conditionA"
+          onChange={onConditionAChange}
+          className="nodrag"
+          style={inputStyle}
           placeholder="Ex: Sim ou Opção 1"
           value={data.conditionA || ''}
         />
       </div>
-      <Handle 
-        type="source" 
-        position={Position.Right} 
+      <Handle
+        type="source"
+        position={Position.Right}
         id="a" // ID da saída A
-        isConnectable={isConnectable} 
-        style={{...handleStyle, top: '50%', background: 'green' }}
+        isConnectable={isConnectable}
+        style={{ ...handleStyle, top: '50%', background: 'green' }}
       />
 
       {/* Saída B (Handle 'b') */}
       <div>
-        <label htmlFor="conditionB" style={labelStyle}>CONDIÇÃO PARA SAÍDA B (Ex: Não):</label>
-        <input 
-          id="conditionB" 
-          name="conditionB" 
-          onChange={onConditionBChange} 
-          className="nodrag" 
-          style={inputStyle} 
+        <label htmlFor="conditionB" style={labelStyle}>CONDIÇÃO PARA SAÍDA B:</label>
+        <input
+          id="conditionB"
+          name="conditionB"
+          onChange={onConditionBChange}
+          className="nodrag"
+          style={inputStyle}
           placeholder="Ex: Não ou Opção 2"
           value={data.conditionB || ''}
         />
       </div>
-      <Handle 
-        type="source" 
-        position={Position.Bottom} 
+      <div>
+        <label htmlFor="conditionC" style={labelStyle}>CONDIÇÃO PARA SAÍDA C:</label>
+        <input
+          id="conditionC"
+          name="conditionC"
+          onChange={onConditionCChange}
+          className="nodrag"
+          style={inputStyle}
+          placeholder="Ex: Talvez ou Opção 3"
+          value={data.conditionC || ''}
+        />
+      </div>
+      <Handle
+        type="source"
+        position={Position.Bottom}
         id="b" // ID da saída B
-        isConnectable={isConnectable} 
-        style={{...handleStyle, background: 'red' }}
+        isConnectable={isConnectable}
+        style={{ ...handleStyle, background: 'red' }}
       />
     </div>
   );

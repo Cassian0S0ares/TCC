@@ -5,7 +5,7 @@ npm audit fix (se precisar)
 npm install whatsapp-web.js qrcode-terminal @ai-sdk/google
 npm install dotenv
 
-Rodar em prompts separados
+Rodar em prompts separados:
 node teste.js
 npm run dev
 node api.js

@@ -1,0 +1,87 @@
+{
+  "nodes": [
+    {
+      "id": "node-start",
+      "type": "textUpdater",
+      "position": {
+        "x": 50,
+        "y": 150
+      },
+      "data": {
+        "messageText": "Olá! Digite o número da opção desejada:\n\n1. Vendas e Informações\n2. Falar com a IA (Suporte)",
+        "conditionA": "1",
+        "conditionB": "2"
+      },
+      "measured": {
+        "width": 200,
+        "height": 461
+      },
+      "selected": true
+    },
+    {
+      "id": "node-vendas",
+      "type": "textUpdater",
+      "position": {
+        "x": 350,
+        "y": 150
+      },
+      "data": {
+        "messageText": "Vendas de 9h às 18h. Digite '0' para voltar.",
+        "conditionA": "0",
+        "conditionB": ""
+      },
+      "measured": {
+        "width": 200,
+        "height": 461
+      }
+    },
+    {
+      "id": "ia-suporte-config",
+      "type": "aiConfig",
+      "position": {
+        "x": 45.62402496099844,
+        "y": 681.0514820592823
+      },
+      "data": {
+        "systemInstructions": "Você é um bot de suporte técnico."
+      },
+      "measured": {
+        "width": 300,
+        "height": 261
+      },
+      "selected": false,
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1-2a",
+      "source": "node-start",
+      "sourceHandle": "a",
+      "target": "node-vendas",
+      "type": "smoothstep",
+      "label": "1 - Vendas"
+    },
+    {
+      "id": "e1-3b",
+      "source": "node-start",
+      "sourceHandle": "b",
+      "target": "ia-suporte-config",
+      "type": "smoothstep",
+      "label": "2 - Suporte (Ativa IA)"
+    },
+    {
+      "id": "e2-1a",
+      "source": "node-vendas",
+      "sourceHandle": "a",
+      "target": "node-start",
+      "type": "smoothstep",
+      "label": "0 - Voltar"
+    }
+  ],
+  "viewport": {
+    "x": 256.3547887654491,
+    "y": -120.4081143850587,
+    "zoom": 1.042864585958416
+  }
+}

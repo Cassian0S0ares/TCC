@@ -1,0 +1,91 @@
+{
+  "nodes": [
+    {
+      "id": "node-start",
+      "type": "textUpdater",
+      "position": {
+        "x": 50,
+        "y": 150
+      },
+      "data": {
+        "messageText": "\"Olá! Qual tipo de ajuda você precisa? \n1. Ajuda com Erro \n2. Falar com Especialista (IA).\"",
+        "conditionA": "1",
+        "conditionB": "2"
+      },
+      "measured": {
+        "width": 280,
+        "height": 380
+      },
+      "selected": false
+    },
+    {
+      "id": "node-vendas",
+      "type": "textUpdater",
+      "position": {
+        "x": 455.56018190499276,
+        "y": 180.16005197285506
+      },
+      "data": {
+        "messageText": "\"Por favor, descreva o erro que está vendo na tela. Nossa IA de suporte analisará a seguir.\" \n0. Voltar para o menu.",
+        "conditionA": "0",
+        "conditionB": ""
+      },
+      "measured": {
+        "width": 280,
+        "height": 380
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "ia-suporte-config",
+      "type": "aiConfig",
+      "position": {
+        "x": 34.851886638664695,
+        "y": 696.2469915156694
+      },
+      "data": {
+        "systemInstructions": "Você é um bot de suporte técnico."
+      },
+      "measured": {
+        "width": 300,
+        "height": 261
+      },
+      "selected": false,
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1-2a",
+      "source": "node-start",
+      "sourceHandle": "a",
+      "target": "node-vendas",
+      "type": "smoothstep",
+      "label": "1 - Vendas",
+      "selected": false
+    },
+    {
+      "id": "e1-3b",
+      "source": "node-start",
+      "sourceHandle": "b",
+      "target": "ia-suporte-config",
+      "type": "smoothstep",
+      "label": "2 - Suporte (Ativa IA)"
+    },
+    {
+      "id": "e2-1a",
+      "source": "node-vendas",
+      "sourceHandle": "a",
+      "target": "node-start",
+      "type": "smoothstep",
+      "label": "0 - Voltar",
+      "selected": false
+    }
+  ],
+  "viewport": {
+    "x": 296.38611887196856,
+    "y": -201.84908484641028,
+    "zoom": 0.9389938989760688
+  }
+}
