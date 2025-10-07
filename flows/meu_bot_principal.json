@@ -4,7 +4,7 @@
       "id": "node-start",
       "type": "textUpdater",
       "position": {
-        "x": 250,
+        "x": 5,
         "y": 5
       },
       "data": {
@@ -15,14 +15,15 @@
       "measured": {
         "width": 200,
         "height": 276
-      }
+      },
+      "selected": true
     },
     {
       "id": "ai-config-default",
       "type": "aiConfig",
       "position": {
-        "x": -376.7581903276131,
-        "y": -29.284711388455534
+        "x": 5,
+        "y": 300
       },
       "data": {
         "systemInstructions": "Você é um assistente prestativo e amigável, especialista em fluxos de WhatsApp."
@@ -31,14 +32,13 @@
         "width": 300,
         "height": 261
       },
-      "selected": true,
-      "dragging": false
+      "selected": false
     }
   ],
   "edges": [],
   "viewport": {
-    "x": 347.28057553956836,
-    "y": 36.86061151079139,
-    "zoom": 1.1528776978417266
+    "x": 335.4599672556624,
+    "y": 134.6736705720768,
+    "zoom": 0.7310654080619724
   }
 }

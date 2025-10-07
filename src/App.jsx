@@ -94,7 +94,7 @@ function FlowCanvas() {
     // Usa 'toObject' desestruturado
     const flow = toObject(); 
     
-    const FLOW_ID = 'meu_bot_principal'; 
+    const FLOW_ID = 'Bot Principal'; 
     const API_URL = `http://localhost:3001/api/flows/${FLOW_ID}`;
 
     try {
