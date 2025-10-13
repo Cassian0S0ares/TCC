@@ -92,7 +92,8 @@ p {
     cursor: pointer;
     display: block;
     width: 45%;
-    background: linear-gradient(90deg, #c49bff, #add8ff);
+    /* background: linear-gradient(90deg, #c49bff, #add8ff); */
+    background-color: white;
 }
 
 .meus-projetos {
@@ -106,15 +107,16 @@ p {
     cursor: pointer;
     display: block;
     width: 45%;
-    background: linear-gradient(90deg, #c49bff, #add8ff);
+     background-color: white;
 }
 
 
 .bloco-projeto:hover {
     animation: floating 3s ease-in-out infinite;
-    background: #A0C7A0;
+    /* background: #A0C7A0; */
     transition: 0.5s;
-    background: linear-gradient(90deg, #b48cec, #91bbe1);
+    /* background: linear-gradient(90deg, #b48cec, #91bbe1); */
+    background-color: white;
 }
 
 @keyframes floating {

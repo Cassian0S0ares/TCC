@@ -1,6 +1,6 @@
 body {
     font-family: "Poppins", sans-serif;
-    background-color: #f0f0f0;
+    background-color: white;
     height: 100vh;
     margin: 0;
     display: flex;
@@ -12,9 +12,11 @@ body {
     width: 1250px;
     height: 650px;
     border-radius: 30px;
-    background: linear-gradient(to bottom, #dccdf5, #dbeaf9);
+    /* background: linear-gradient(to bottom, #dccdf5, #dbeaf9); */
     padding: 40px;
     box-sizing: border-box;
+    background-color: white;
+    color: #783FBD;
 }
 
 .container {
@@ -35,7 +37,7 @@ body {
 .numero-projetos {
     font-size: 60px;
     font-weight: 700;
-    color: white;
+    color: #783FBD;
     margin-right: 15px;
 }
 
@@ -59,6 +61,8 @@ h1 {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+    color: #783FBD;
+    background-color: #783FBD;
 }
 
 .casa,
@@ -67,6 +71,8 @@ h1 {
     height: auto;
     margin-left: 0;
     margin: 20px;
+    color: #783FBD;
+    background-color: #783FBD;
 }
 
 .projetos-container {

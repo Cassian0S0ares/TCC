@@ -8,51 +8,46 @@
         "y": 150
       },
       "data": {
-        "messageText": "Olá! Digite o número da opção desejada:\n\n1. Horário de Vendas\n2. Falar com a IA (Suporte)",
+        "messageText": "Olá! Digite o número da opção desejada:\n\n1. Vendas e Informações\n2. Falar com a IA (Suporte)",
         "conditionA": "1",
         "conditionB": "2"
       },
       "measured": {
         "width": 200,
         "height": 461
-      },
-      "selected": false
+      }
     },
     {
       "id": "node-vendas",
       "type": "textUpdater",
       "position": {
-        "x": 433.38685764707395,
-        "y": 184.69186876113446
+        "x": 350,
+        "y": 150
       },
       "data": {
-        "messageText": "Vendas de 9h às 18h. Digite '0' para voltar ao menu.",
+        "messageText": "Vendas de 9h às 18h. Digite '0' para voltar.",
         "conditionA": "0",
         "conditionB": ""
       },
       "measured": {
         "width": 200,
         "height": 461
-      },
-      "selected": false,
-      "dragging": false
+      }
     },
     {
       "id": "ia-suporte-config",
       "type": "aiConfig",
       "position": {
-        "x": 24.205280606536206,
-        "y": 742.9657610975246
+        "x": 50,
+        "y": 450
       },
       "data": {
-        "systemInstructions": "Responda as perguntas com frases curtas e emoji de robo."
+        "systemInstructions": "Você é um bot de suporte técnico."
       },
       "measured": {
         "width": 300,
         "height": 261
-      },
-      "selected": false,
-      "dragging": false
+      }
     }
   ],
   "edges": [
@@ -62,8 +57,7 @@
       "sourceHandle": "a",
       "target": "node-vendas",
       "type": "smoothstep",
-      "label": "1 - Vendas",
-      "selected": false
+      "label": "1 - Vendas"
     },
     {
       "id": "e1-3b",
@@ -83,8 +77,8 @@
     }
   ],
   "viewport": {
-    "x": 363.2340967815585,
-    "y": -284.1713429867491,
-    "zoom": 0.6294558702564428
+    "x": 292.7192513368984,
+    "y": -140.3903743315508,
+    "zoom": 1.142602495543672
   }
 }

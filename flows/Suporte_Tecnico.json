@@ -8,31 +8,31 @@
         "y": 150
       },
       "data": {
-        "messageText": "\"Olá! Qual tipo de ajuda você precisa? \n1. Ajuda com Erro \n2. Falar com Especialista (IA).\"",
+        "messageText": "Olá! Qual tipo de ajuda você precisa? \n1. Ajuda com Erro \n2. Falar com Especialista (IA).\nCaso precise voltar ao menu digite #reiniciar.",
         "conditionA": "1",
         "conditionB": "2"
       },
       "measured": {
-        "width": 280,
-        "height": 380
+        "width": 200,
+        "height": 461
       },
-      "selected": false
+      "selected": true
     },
     {
       "id": "node-vendas",
       "type": "textUpdater",
       "position": {
-        "x": 455.56018190499276,
+        "x": 465.6350273529263,
         "y": 180.16005197285506
       },
       "data": {
-        "messageText": "\"Por favor, descreva o erro que está vendo na tela. Nossa IA de suporte analisará a seguir.\" \n0. Voltar para o menu.",
+        "messageText": "Por favor, descreva o erro que está vendo na tela. Nossa IA de suporte analisará a seguir. \n0. Voltar para o menu.",
         "conditionA": "0",
         "conditionB": ""
       },
       "measured": {
-        "width": 280,
-        "height": 380
+        "width": 200,
+        "height": 461
       },
       "selected": false,
       "dragging": false
@@ -45,7 +45,7 @@
         "y": 696.2469915156694
       },
       "data": {
-        "systemInstructions": "Você é um bot de suporte técnico."
+        "systemInstructions": "Você é um bot de suporte técnico, responda as perguntas de forma técnica e explicativa."
       },
       "measured": {
         "width": 300,
@@ -84,8 +84,8 @@
     }
   ],
   "viewport": {
-    "x": 296.38611887196856,
-    "y": -201.84908484641028,
-    "zoom": 0.9389938989760688
+    "x": 348.3074328145783,
+    "y": -7.217523346779615,
+    "zoom": 0.6912666345464898
   }
 }

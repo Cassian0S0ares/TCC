@@ -2,29 +2,33 @@ import qrcode from 'qrcode-terminal';
 import { Client } from 'whatsapp-web.js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import fetch from 'node-fetch';
-import { findBestMatch } from 'string-similarity'; 
+import { findBestMatch } from 'string-similarity';
+import 'dotenv/config';
+
 
 // --- Configurações ---
-const GEMINI_API_KEY = "AIzaSyBWPkHIwzfOYKUR8dj2e1rSSzX6P2sWGoo"; 
-const FLOW_API_URL = 'http://localhost:3001/api/flows/Vendas_Bot'; 
-const SIMILARITY_THRESHOLD = 0.6; // Nível de similaridade para reconhecer a condição
+// ⚠️ ATENÇÃO: SUBSTITUA ESTA CHAVE PELA SUA CHAVE API REAL DO GEMINI!
+const GEMINI_API_KEY = "SUA_CHAVE_API_AQUI"; 
+
+const CURRENT_FLOW_ID = process.env.CURRENT_FLOW_ID || 'Vendas_Bot';
+const FLOW_API_URL = `http://localhost:3001/api/flows/${CURRENT_FLOW_ID}`;
+
+const SIMILARITY_THRESHOLD = 0.6;
 
 // --- Inicialização de Serviços ---
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+// Garante que o bot não falhe, mas usa a chave configurada
+const finalApiKey = GEMINI_API_KEY === "SUA_CHAVE_API_AQUI" ? "AIzaSyBWPkHIwzfOYKUR8dj2e1rSSzX6P2sWGoo" : GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(finalApiKey);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 const client = new Client();
 
 // --- Variáveis de Estado ---
-let FLOW_MAP_JSON = null; 
-let SYSTEM_INSTRUCTIONS = null; // Instruções da IA carregadas do bloco 'aiConfig'
-const conversations = {}; // Histórico do Gemini
-const userState = {}; // Rastreamento do usuário no fluxo
+let FLOW_MAP_JSON = null;
+let SYSTEM_INSTRUCTIONS = null;
+const conversations = {};
+const userState = {};
 
-// --- Funções de Lógica do Fluxo ---
-
-/**
- * Encontra o objeto Nó pelo seu ID.
- */
+/** * Encontra o objeto Nó pelo seu ID. */
 function getNode(nodeId) {
     if (!FLOW_MAP_JSON || !FLOW_MAP_JSON.nodes) return null;
     return FLOW_MAP_JSON.nodes.find(n => n.id === nodeId);
@@ -42,9 +46,8 @@ async function loadFlowMap() {
         }
         FLOW_MAP_JSON = await response.json();
         
-        // NOVO: Procura e extrai as instruções da IA do fluxo
         const aiConfigNode = FLOW_MAP_JSON.nodes.find(n => n.type === 'aiConfig');
-        
+
         if (aiConfigNode && aiConfigNode.data.systemInstructions) {
             SYSTEM_INSTRUCTIONS = aiConfigNode.data.systemInstructions;
             console.log("🟢 Instruções de IA carregadas do bloco!");
@@ -52,8 +55,7 @@ async function loadFlowMap() {
             SYSTEM_INSTRUCTIONS = "A partir de agora, responda sempre em português e mantenha o contexto da conversa. Seu papel é atuar como um chatbot de suporte genérico.";
             console.log("🟡 Usando instruções de IA padrão (Bloco 'aiConfig' não encontrado).");
         }
-
-        console.log(`✅ Fluxo carregado com ${FLOW_MAP_JSON.nodes.length} nós.`);
+        console.log(`✅ Fluxo carregado com ${FLOW_MAP_JSON.nodes.length} nós. ID ATUAL: ${CURRENT_FLOW_ID}`);
         return true;
     } catch (error) {
         console.error("❌ ERRO GRAVE ao carregar o FLOW_MAP (Verifique a API na porta 3001):", error.message);
@@ -71,7 +73,7 @@ function getNextNodeId(currentNodeId, userAnswer) {
 
     const outgoingEdges = FLOW_MAP_JSON.edges.filter(e => e.source === currentNodeId);
     const currentNode = getNode(currentNodeId);
-    
+
     if (!currentNode || outgoingEdges.length === 0) return null;
 
     const normalizedAnswer = userAnswer.toLowerCase().trim();
@@ -89,13 +91,13 @@ function getNextNodeId(currentNodeId, userAnswer) {
         }
 
         if (condition) {
-            conditions.push({ 
-                condition: condition.toLowerCase().trim(), 
-                targetId: edge.target 
+            conditions.push({
+                condition: condition.toLowerCase().trim(),
+                targetId: edge.target
             });
         }
     }
-    
+
     // 2. Tenta encontrar a melhor correspondência (String Similarity)
     if (conditions.length > 0) {
         const targets = conditions.map(c => c.condition);
@@ -111,37 +113,50 @@ function getNextNodeId(currentNodeId, userAnswer) {
 }
 
 /**
- * Lógica de processamento de mensagem usando o Gemini, com base nas SYSTEM_INSTRUCTIONS.
+ * Lógica de processamento de mensagem usando o Gemini, com tratamento de erro.
  */
 async function getAiResponse(chatId, userMessage) {
     // 1. Inicializa o histórico do chat
     if (!conversations[chatId]) {
         conversations[chatId] = [
-            // Usa as instruções carregadas (SYSTEM_INSTRUCTIONS)
-            { role: "user", content: SYSTEM_INSTRUCTIONS }, 
+            { role: "user", content: SYSTEM_INSTRUCTIONS },
             { role: "model", content: "Entendido. Aplicando as configurações e estou pronto para interagir!" },
         ];
     }
-    
+
     // 2. Adiciona mensagem do usuário
     conversations[chatId].push({ role: "user", content: userMessage });
 
     // 3. Envia para o Gemini
-    const chat = model.startChat({ history: conversations[chatId].map((m) => ({
-        role: m.role,
-        parts: [{ text: m.content }],
-      })), generationConfig: { maxOutputTokens: 500 } });
+    const chat = model.startChat({
+        history: conversations[chatId].map((m) => ({
+            role: m.role,
+            parts: [{ text: m.content }],
+        })), generationConfig: { maxOutputTokens: 500 }
+    });
 
-    const result = await chat.sendMessage(userMessage);
-    const response = await result.response;
-    
-    const aiReply = response.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "Desculpe, não consegui gerar uma resposta com a IA.";
+    try {
+        const result = await chat.sendMessage(userMessage);
+        const response = await result.response;
 
-    // 4. Adiciona resposta da IA ao histórico
-    conversations[chatId].push({ role: "model", content: aiReply });
-    
-    return aiReply;
+        // 🟢 DEBUG: Se a resposta for vazia, loga no console para diagnóstico.
+        if (response && response.candidates && response.candidates.length === 0) {
+             console.log("⚠️ Resposta do Gemini VAZIA. Verifique o prompt ou a segurança.");
+        }
+
+        // Se o Gemini não retornar conteúdo (caindo no ||), retorna o erro de geração.
+        const aiReply = response.candidates?.[0]?.content?.parts?.[0]?.text ||
+            "Desculpe, não consegui gerar uma resposta com a IA.";
+
+        // 4. Adiciona resposta da IA ao histórico
+        conversations[chatId].push({ role: "model", content: aiReply });
+
+        return aiReply;
+    } catch (error) {
+        console.error("❌ ERRO GRAVE na chamada da API Gemini:", error.message || error);
+        // Esta mensagem será enviada ao usuário em caso de falha na chave/conexão.
+        return "❌ Desculpe, a IA está indisponível ou ocorreu um erro de conexão. Por favor, verifique se sua chave API do Gemini está correta e se há conexão com a internet.";
+    }
 }
 
 // --- Eventos do WhatsApp ---
@@ -152,7 +167,7 @@ client.on("qr", (qr) => {
 
 client.on("ready", async () => {
     console.log("🤖 Cliente WhatsApp conectado.");
-    await loadFlowMap(); 
+    await loadFlowMap(); // Carrega o mapa e as instruções da IA no início
     console.log(`🚀 Motor de Execução ${FLOW_MAP_JSON ? 'DE FLUXO ATIVO' : 'DE IA APENAS'}.`);
 });
 
@@ -163,63 +178,93 @@ client.on("message", async (message) => {
 
     // Comandos de controle
     if (normalizedMessage === '#reiniciar' || normalizedMessage === '#menu') {
-        if (FLOW_MAP_JSON) {
+        if (FLOW_MAP_JSON && FLOW_MAP_JSON.nodes.length > 0) {
             userState[chatId] = { currentNodeId: FLOW_MAP_JSON.nodes[0].id, mode: 'flow' };
             const initialNode = getNode(userState[chatId].currentNodeId);
-            return message.reply(`Comando recebido. Voltando ao fluxo principal.\n\n${initialNode.data.messageText}`);
+            if (initialNode && initialNode.data && initialNode.data.messageText) {
+                return message.reply(`Comando recebido. Voltando ao fluxo principal.\n\n${initialNode.data.messageText}`);
+            } else {
+                return message.reply("Comando recebido. Voltando ao fluxo principal (Nó inicial sem mensagem).");
+            }
         }
         return message.reply("Não há um fluxo ativo para reiniciar. Você está no modo IA.");
     }
-    if (normalizedMessage === '#atualizar' && message.fromMe) { 
+
+    if (normalizedMessage === '#atualizar' && message.fromMe) {
         const success = await loadFlowMap();
-        return message.reply(success ? "Fluxo atualizado com sucesso!" : "Falha ao atualizar o fluxo. Verifique a API.");
+        return message.reply(success ? `✅ Fluxo atualizado com sucesso! ID: ${CURRENT_FLOW_ID}. Novas conversas usarão a versão mais recente.` : "❌ Falha ao atualizar o fluxo. Verifique a API na porta 3001.");
     }
 
     // 1. Inicializa o estado do usuário
     if (!userState[chatId]) {
         const initialMode = FLOW_MAP_JSON ? 'flow' : 'ai_only';
-        userState[chatId] = { 
-            currentNodeId: FLOW_MAP_JSON?.nodes[0]?.id, 
-            mode: initialMode 
+        userState[chatId] = {
+            currentNodeId: FLOW_MAP_JSON?.nodes[0]?.id,
+            mode: initialMode
         };
+        // Se estiver em modo fluxo, envia a primeira mensagem
+        if (initialMode === 'flow') {
+            const initialNode = getNode(userState[chatId].currentNodeId);
+            if (initialNode && initialNode.data && initialNode.data.messageText) {
+                return message.reply(initialNode.data.messageText);
+            }
+        }
     }
-    
-    let currentState = userState[chatId];
-    let reply = "";
 
+    let currentState = userState[chatId];
+    
     try {
-        
-        // --- 2. Tentar Executar o Fluxo (Modo Padrão) ---
+
+        // --- 2. Tentar Executar o Fluxo (PRIORIDADE) ---
         if (currentState.mode === 'flow' && FLOW_MAP_JSON) {
-            
+
             const nextNodeId = getNextNodeId(currentState.currentNodeId, userMessage);
-            
+
             if (nextNodeId) {
                 // Rota do Fluxo Encontrada
                 currentState.currentNodeId = nextNodeId;
                 const nextNode = getNode(nextNodeId);
-                reply = nextNode.data.messageText;
-                
+
+                // Verifica se o próximo nó é uma Configuração de IA
+                if (nextNode.type === 'aiConfig') {
+                    // 🟢 CORREÇÃO: Mudar para modo IA, enviar sinalização e RETORNAR
+                    
+                    currentState.mode = 'ai_support';
+                    
+                    // 1. Envia a MENSAGEM DE SINALIZAÇÃO
+                    await message.reply("🤖 **Entendido!** Você está falando com o nosso Suporte de IA agora.\n\n*Descreva seu problema ou pergunta livremente. Digite #menu para voltar ao fluxo.*");
+                    
+                    // 2. RETORNA: Interrompe o processamento da mensagem atual ("2") e espera o próximo input.
+                    return; 
+
+                } else {
+                    // Próximo nó é um Bloco de Mensagem
+                    // Responde com a mensagem do nó e ENCERRA A EXECUÇÃO.
+                    return message.reply(nextNode.data.messageText);
+                }
+
+
             } else {
                 // Nenhuma rota do fluxo encontrada (Fallback para IA)
                 currentState.mode = 'ai_support';
+
+                // Avisa que entrou no modo IA antes de enviar a resposta
+                await message.reply("Não entendi essa opção. Você pode perguntar o que precisar, ou digite **#reiniciar** para voltar ao menu.");
                 
-                message.reply("Não entendi essa opção. Você pode perguntar o que precisar, ou digite **#reiniciar** para voltar ao menu.");
-                
-                reply = await getAiResponse(chatId, userMessage);
+                // Processa a mensagem inválida com a IA e retorna a resposta
+                const aiReply = await getAiResponse(chatId, userMessage);
+                return message.reply(aiReply);
             }
-            
-        } 
-        
-        // --- 3. Executar Gemini (Modo de Suporte IA) ---
-        if (currentState.mode === 'ai_support' || currentState.mode === 'ai_only') {
-            reply = await getAiResponse(chatId, userMessage);
+
         }
 
-        // 4. Responde no WhatsApp
-        if (reply) {
-             message.reply(reply);
+        // --- 3. Executar Gemini (Modo de Suporte IA ou ai_only) ---
+        // Este bloco lida com a conversa contínua com a IA.
+        if (currentState.mode === 'ai_support' || currentState.mode === 'ai_only') {
+            const aiReply = await getAiResponse(chatId, userMessage);
+            return message.reply(aiReply);
         }
+
 
     } catch (error) {
         console.error(`ERRO no processamento de mensagem [${chatId}]:`, error);
@@ -227,4 +272,4 @@ client.on("message", async (message) => {
     }
 });
 
-client.initialize();
+client.initialize();    
