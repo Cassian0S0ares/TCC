@@ -46,7 +46,7 @@ function validarSenha() {
         alert("Conta criada com sucesso, Bem-Vindo " + usuario);
         document.getElementById("email").value = "";
         document.getElementById("senha").value = "";
-        window.location.href='home.html'
+        window.location.href='projetos.html'
     } else {
         alert(resultadoSenha !== "Conta criada" ? resultadoSenha : resultadoEmail);
     }
