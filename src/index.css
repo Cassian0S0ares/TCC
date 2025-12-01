@@ -31,4 +31,5 @@ html, body {
     margin: 5px;
     justify-content: center;
     bottom: 3px;
+    filter: brightness(0) invert(1);
 }
