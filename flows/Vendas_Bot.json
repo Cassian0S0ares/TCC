@@ -41,8 +41,8 @@
       "id": "ia-suporte-config",
       "type": "aiConfig",
       "position": {
-        "x": 24.205280606536206,
-        "y": 742.9657610975246
+        "x": -2.481149427761437,
+        "y": 745.5073258626958
       },
       "data": {
         "systemInstructions": "Responda as perguntas com frases curtas e emoji de robo."
@@ -51,7 +51,7 @@
         "width": 300,
         "height": 261
       },
-      "selected": false,
+      "selected": true,
       "dragging": false
     }
   ],
@@ -83,8 +83,8 @@
     }
   ],
   "viewport": {
-    "x": 363.2340967815585,
-    "y": -284.1713429867491,
-    "zoom": 0.6294558702564428
+    "x": 146.76485098273167,
+    "y": -173.0375192916996,
+    "zoom": 0.7869167952779974
   }
 }

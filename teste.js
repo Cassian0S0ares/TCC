@@ -8,7 +8,7 @@ import 'dotenv/config';
 
 // --- Configurações ---
 // ⚠️ ATENÇÃO: SUBSTITUA ESTA CHAVE PELA SUA CHAVE API REAL DO GEMINI!
-const GEMINI_API_KEY = "SUA_CHAVE_API_AQUI"; 
+const GEMINI_API_KEY = "AIzaSyBWPkHIwzfOYKUR8dj2e1rSSzX6P2sWGoo"; 
 
 const CURRENT_FLOW_ID = process.env.CURRENT_FLOW_ID || 'Vendas_Bot';
 const FLOW_API_URL = `http://localhost:3001/api/flows/${CURRENT_FLOW_ID}`;
@@ -17,7 +17,7 @@ const SIMILARITY_THRESHOLD = 0.6;
 
 // --- Inicialização de Serviços ---
 // Garante que o bot não falhe, mas usa a chave configurada
-const finalApiKey = GEMINI_API_KEY === "SUA_CHAVE_API_AQUI" ? "AIzaSyBWPkHIwzfOYKUR8dj2e1rSSzX6P2sWGoo" : GEMINI_API_KEY;
+const finalApiKey = GEMINI_API_KEY === "AIzaSyBWPkHIwzfOYKUR8dj2e1rSSzX6P2sWGoo" ? "AIzaSyBWPkHIwzfOYKUR8dj2e1rSSzX6P2sWGoo" : GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(finalApiKey);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 const client = new Client();
