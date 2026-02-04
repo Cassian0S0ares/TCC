@@ -7,8 +7,8 @@ import 'dotenv/config';
 
 
 // --- Configurações ---
-// ⚠️ ATENÇÃO: SUBSTITUA ESTA CHAVE PELA SUA CHAVE API REAL DO GEMINI!
-const GEMINI_API_KEY = "AIzaSyBWPkHIwzfOYKUR8dj2e1rSSzX6P2sWGoo"; 
+// SUBSTITUA ESTA CHAVE PELA SUA CHAVE API REAL DO GEMINI!
+const GEMINI_API_KEY = "sua_chave"; 
 
 const CURRENT_FLOW_ID = process.env.CURRENT_FLOW_ID || 'Vendas_Bot';
 const FLOW_API_URL = `http://localhost:3001/api/flows/${CURRENT_FLOW_ID}`;
