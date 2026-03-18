@@ -28,7 +28,7 @@
       "data": {
         "messageText": "Vendas de 9h às 18h. Digite '0' para voltar ao menu.",
         "conditionA": "0",
-        "conditionB": ""
+        "conditionB": "1"
       },
       "measured": {
         "width": 200,
@@ -46,6 +46,42 @@
       },
       "data": {
         "systemInstructions": "Responda as perguntas com frases curtas e emoji de robo."
+      },
+      "measured": {
+        "width": 300,
+        "height": 261
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "node-textUpdater-1773797994695",
+      "type": "textUpdater",
+      "position": {
+        "x": 433.15837320346105,
+        "y": 714.2505462351173
+      },
+      "data": {
+        "messageText": "Mensagem Teste",
+        "conditionA": "1",
+        "conditionB": ""
+      },
+      "measured": {
+        "width": 200,
+        "height": 461
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "node-aiConfig-1773798041128",
+      "type": "aiConfig",
+      "position": {
+        "x": 671.034264504496,
+        "y": 906.3900142124269
+      },
+      "data": {
+        "systemInstructions": "Instruções da IA aqui."
       },
       "measured": {
         "width": 300,
@@ -80,11 +116,24 @@
       "target": "node-start",
       "type": "smoothstep",
       "label": "0 - Voltar"
+    },
+    {
+      "source": "node-vendas",
+      "sourceHandle": "b",
+      "target": "node-textUpdater-1773797994695",
+      "id": "xy-edge__node-vendasb-node-textUpdater-1773797994695",
+      "selected": false
+    },
+    {
+      "source": "node-textUpdater-1773797994695",
+      "sourceHandle": "b",
+      "target": "node-aiConfig-1773798041128",
+      "id": "xy-edge__node-textUpdater-1773797994695b-node-aiConfig-1773798041128"
     }
   ],
   "viewport": {
-    "x": 146.76485098273167,
-    "y": -173.0375192916996,
+    "x": 243.76485098273167,
+    "y": -381.0375192916996,
     "zoom": 0.7869167952779974
   }
 }
