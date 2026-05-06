@@ -1,79 +1,115 @@
-# autoAbout: Chatbot No-Code
+# autoAbout
 
-O **autoAbout** é uma plataforma no-code para criação de chatbots com interface visual drag-and-drop. A proposta é permitir que qualquer pessoa crie fluxos de conversa de forma intuitiva, sem precisar programar.
+[![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)]()
+[![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)]()
+[![WhatsApp Web.js](https://img.shields.io/badge/WhatsApp%20Web.js-25D366?logo=whatsapp&logoColor=white)]()
+[![License](https://img.shields.io/badge/license-MIT-green)]()
 
-O projeto combina edição visual de fluxos com resposta inteligente por IA, priorizando caminhos estruturados e usando o Google Gemini como fallback para perguntas livres.
+O **autoAbout** é uma plataforma no-code para criação de chatbots com interface visual drag-and-drop. O projeto permite montar fluxos de conversação de forma intuitiva, integrando frontend, API e bot em processos separados [web:12][web:25].
+
+## Visão geral
+
+A proposta do autoAbout é simplificar a construção de automações e chatbots por meio de um editor visual baseado em nós. A aplicação combina fluxo estruturado com integração de IA, oferecendo uma experiência prática para criação e manutenção de conversas automatizadas.
 
 ## Funcionalidades
 
-- Interface drag-and-drop para montagem visual dos fluxos.
-- Editor híbrido com fluxo estruturado + IA.
-- Nós personalizados, como `AIConfigNode` e `TextUpdaterNode`.
-- Gestão dinâmica do estado por usuário.
-- Renderização em tempo real das alterações no diagrama.
+- Interface visual drag-and-drop para criação de fluxos.
+- Estrutura separada entre frontend, API e bot.
+- Integração com WhatsApp via `whatsapp-web.js`.
+- Leitura de variáveis de ambiente com `dotenv`.
+- Geração de QR Code no terminal com `qrcode-terminal`.
+- Suporte a IA com `@ai-sdk/google`.
 
-## Tecnologias
+## Tecnologias utilizadas
 
-| Camada | Tecnologia | Descrição |
-|---|---|---|
-| Frontend | React | Interface reativa e componentes de UI |
-| Backend | Node.js / Express | APIs, processamento e integração com `whatsapp-web.js` |
-| Diagramação | `@xyflow/react` | Renderização e manipulação de nós e conexões |
-| IA | Google Gemini | Respostas naturais para conversas não estruturadas |
-| Estado | Context API / Redux | Gerenciamento centralizado do fluxo e da sessão |
+- React.
+- Node.js.
+- Express.
+- `whatsapp-web.js`.
+- `qrcode-terminal`.
+- `@ai-sdk/google`.
+- `dotenv`.
 
-## Estrutura do frontend
+## Estrutura do projeto
 
-- `App.jsx`: ponto de entrada e lógica principal do editor.
-- `AIConfigNode.jsx`: componente do nó de configuração de IA.
-- `TextUpdaterNode.jsx`: componente para mensagens de texto.
-- `cadastro.js`: tela de cadastro.
-- `login.css`: estilos da autenticação.
-- `home.css`: estilos da página inicial.
-- `projetos.css`: estilos da área de projetos.
+- `teste.js`: inicializa o bot e exibe o QR Code no terminal.
+- `api.js`: responsável pela API do projeto.
+- `npm run dev`: inicia a interface visual.
+- `.env`: arquivo de variáveis de ambiente.
 
-## Desafio técnico
+## Pré-requisitos
 
-Diferente de aplicações CRUD tradicionais, um editor de diagramas precisa sincronizar em tempo real centenas de nós e conexões. No autoAbout, o gerenciamento de estado foi otimizado para manter a experiência fluida mesmo em fluxos extensos.
+Antes de começar, tenha instalado:
+
+- Node.js.
+- npm.
+- Conta WhatsApp ativa para autenticação do bot.
 
 ## Instalação
 
-### 1. Clone o repositório
+### 1. Entre no projeto
 
 ```bash
-git clone https://github.com/daviferreira-dev/TCC.git
-cd TCC
-npm install
+cd nome-do-projeto
 ```
 
-### 2. Configure a IA
+### 2. Instale as dependências
 
-Crie um arquivo `.env` na raiz do projeto:
+```bash
+npm install
+npm audit fix
+npm install whatsapp-web.js qrcode-terminal @ai-sdk/google dotenv
+```
+
+O `npm audit fix` deve ser usado para corrigir vulnerabilidades conhecidas quando possível, sem forçar alterações desnecessárias [web:21][web:11].
+
+### 3. Configure o arquivo `.env`
+
+Crie um arquivo `.env` na raiz do projeto e adicione suas variáveis:
 
 ```env
 GEMINI_API_KEY=SUA_CHAVE_AQUI
 ```
 
-### 3. Execute o projeto
+O pacote `dotenv` carrega essas variáveis para a aplicação durante a execução [web:13][web:19].
 
-Abra dois terminais:
+## Execução
 
-**Terminal 1 — servidor/bot**
+Abra **3 terminais separados** e execute os comandos abaixo:
+
+### Terminal 1 — Bot
+
 ```bash
-node server.js
+node teste.js
 ```
 
-**Terminal 2 — interface visual**
+Esse processo inicia o bot e exibe o QR Code no terminal para autenticação no WhatsApp [web:12][web:28].
+
+### Terminal 2 — Frontend
+
 ```bash
 npm run dev
 ```
 
-Se o bot solicitar autenticação, escaneie o QR Code exibido no terminal.
+Esse comando inicia a interface visual do projeto.
 
-## Objetivo do projeto
+### Terminal 3 — API
 
-O autoAbout foi desenvolvido por **Davi Ferreira** como Trabalho de Conclusão de Curso (TCC), com foco em automação visual, usabilidade e criação simplificada de chatbots.
+```bash
+node api.js
+```
 
-## Licença
+Esse processo sobe a API responsável pela comunicação do sistema.
 
-Defina aqui a licença do projeto, se aplicável.
+## Fluxo recomendado
+
+1. Instale as dependências.
+2. Configure o arquivo `.env`.
+3. Inicie o bot no Terminal 1.
+4. Inicie o frontend no Terminal 2.
+5. Inicie a API no Terminal 3.
+6. Escaneie o QR Code com o WhatsApp quando ele aparecer.
+
+## Observações
+
+O `whatsapp-web.js` funciona como cliente do WhatsApp Web e normalmente exige autenticação por QR Code, por isso o uso de `qrcode-terminal` é apropriado nesse fluxo [web:12][web:25].
