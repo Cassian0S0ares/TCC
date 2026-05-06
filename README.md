@@ -23,6 +23,26 @@ Plataforma **no-code** para criação de chatbots com **editor visual drag-and-d
 
 ---
 
+🔐 Configuração
+
+Crie um .env:
+
+GEMINI_API_KEY=SUA_CHAVE
+
+----
+
+💡 Casos de Uso
+Atendimento automatizado
+Bots de vendas
+Suporte com IA
+Automação de processos
+
+----
+
+🛠️ Stack
+
+React • Node.js • Express • whatsapp-web.js • Gemini AI
+
 ## 🚀 Como Rodar
 
 ```bash
@@ -33,23 +53,7 @@ node teste.js
 npm run dev
 # Terminal 3
 node api.js
+-Escaneie o QR Code e pronto.
 
-Escaneie o QR Code e pronto.
 
-🔐 Configuração
 
-Crie um .env:
-
-GEMINI_API_KEY=SUA_CHAVE
-💡 Casos de Uso
-Atendimento automatizado
-Bots de vendas
-Suporte com IA
-Automação de processos
-🛠️ Stack
-
-React • Node.js • Express • whatsapp-web.js • Gemini AI
-
-👨‍💻 Autor
-
-Davi Ferreira
