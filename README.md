@@ -3,7 +3,6 @@
 [![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)]()
 [![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)]()
 [![WhatsApp Web.js](https://img.shields.io/badge/WhatsApp%20Web.js-25D366?logo=whatsapp&logoColor=white)]()
-[![License](https://img.shields.io/badge/license-MIT-green)]()
 
 O **autoAbout** é uma plataforma no-code para criação de chatbots com interface visual drag-and-drop. O projeto permite montar fluxos de conversação de forma intuitiva, integrando frontend, API e bot em processos separados [web:12][web:25].
 
